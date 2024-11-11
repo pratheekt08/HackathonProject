@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check the Weather</title>
+    <style>
+        /* Animated gradient background */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #00aaff, #4facfe);
+            background-size: 200% 200%;
+            animation: gradient 10s ease infinite;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        section {
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+            transition: transform 0.3s;
+        }
+
+        section:hover {
+            transform: scale(1.05);
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 2px solid #00796b;
+            width: 100%;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus {
+            border-color: #004d40;
+        }
+
+        button {
+            background-color: #2196F3; /* Blue button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #1976D2; /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            display: none; /* Initially hide the result */
+        }
+
+        .error {
+            color: red;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        img.weather-icon {
+            width: 50px; /* Set the size of the weather icon */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Get real-time weather information.</h1>
+    </header>
+
+    <section>
+        <p>Enter a City:</p>
+        <input type="text" id="cityInput" placeholder="E.g., New York, Tokyo">
+        <button onclick="getWeather()">Check Weather</button>
+        <div class="result" id="weatherResult"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 My Weather Website</p>
+    </footer>
+
+    <script>
+        async function getWeather() {
+            const cityInput = document.getElementById('cityInput').value;
+            const response = await fetch(`/weather?city=${encodeURIComponent(cityInput)}`);
+
+            const resultDiv = document.getElementById('weatherResult');
+            resultDiv.style.display = 'block'; // Show result div
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                resultDiv.innerHTML = '<span class="error">Error fetching weather data: ' + errorData.error + '</span>';
+            } else {
+                const weatherData = await response.json();
+                const weatherToday = weatherData.consolidated_weather[0];
+                const weatherIcon = `https://www.metaweather.com/static/img/weather/${weatherToday.weather_state_abbr}.svg`; // Weather icon URL
+                resultDiv.innerHTML = `
+                    <img class="weather-icon" src="${weatherIcon}" alt="${weatherToday.weather_state_name}">
+                    <p>Weather in ${weatherData.title}: ${weatherToday.weather_state_name}</p>
+                    <p>Temperature: ${weatherToday.the_temp.toFixed(1)}°C</p>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>
