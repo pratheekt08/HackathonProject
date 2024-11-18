@@ -19,13 +19,10 @@ Requests
 Scikit-learn
 To install the necessary Python libraries, run the following command:
 
-bash
-Copy code
 pip install pandas flask requests scikit-learn
 Setup Instructions
 Clone the repository:
 
-bash
 Copy code
 git clone https://github.com/yourusername/WeatherWatch24.git
 Navigate into the project directory:
